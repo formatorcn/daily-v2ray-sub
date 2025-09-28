@@ -1,0 +1,41 @@
+name: Install Xray in Actions
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  install-xray:
+    runs-on: ubuntu-latest  # 使用 Ubuntu 虚拟机
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install Xray-core
+      run: |
+        # 一键安装脚本（使用 nobody 用户，避免覆盖服务文件）
+        bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install
+        
+        # 验证安装
+        xray --version
+        
+        # 可选：安装 geodata（地理数据，用于路由）
+        bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install-geodata
+
+    - name: Run Xray (示例：启动并测试)
+      run: |
+        # 创建简单配置文件（config.json），根据需要自定义
+        cat > config.json << EOF
+        {
+          "inbounds": [{"port": 1080, "protocol": "socks"}],
+          "outbounds": [{"protocol": "freedom"}]
+        }
+        EOF
+        
+        # 后台运行 Xray
+        nohup xray run -c config.json &
+        
+        # 测试本地 SOCKS 代理（示例）
+        curl --socks5 127.0.0.1:1080 http://www.gstatic.com/generate_204 || echo "Test failed"
