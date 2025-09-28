@@ -1,4 +1,4 @@
-name: Install Xray in Actions
+name: Install Xray and Run update_sub
 
 on:
   push:
@@ -13,22 +13,26 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Install Xray-core (无 root)
+    - name: Install Xray-core
       run: |
-        # 下载最新 Xray 预编译二进制（Linux 64 位）
         curl -L https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-64.zip -o xray.zip
         unzip xray.zip -d xray
         chmod +x xray/xray
         mv xray/xray /usr/local/bin/xray
-        xray --version  # 验证安装
+        xray --version
 
-        # 下载 geodata（可选）
-        curl -L https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat -o geoip.dat
-        curl -L https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat -o geosite.dat
+    - name: Install Python dependencies
+      run: |
+        python3 -m pip install --user requests
 
     - name: Run update_sub.py
       run: |
-        # 确保 Python 环境
-        python3 -m pip install requests
-        # 运行你的脚本
         python3 update_sub.py
+
+    - name: Upload sub.txt
+      uses: actions/upload-artifact@v4
+      with:
+        name: sub-files
+        path: |
+          sub.txt
+          sub_base64.txt
