@@ -1,46 +1,59 @@
-name: Install Xray and Run update_sub
+name: Generate and Commit sub.txt
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # 每天 UTC 00:00（北京时间 08:00）
-  workflow_dispatch:  # 手动触发
-  
+    - cron: '0 0 * * *' # 每天 UTC 00:00（北京时间 08:00）
+  workflow_dispatch: # 手动触发
+
 jobs:
-  install-xray:
+  generate-sub:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Install Xray-core
-      run: |
-        curl -L https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-64.zip -o xray.zip
-        unzip xray.zip -d xray
-        chmod +x xray/xray
-        mv xray/xray /usr/local/bin/xray
-        xray --version
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x' # 指定 Python 版本，例如 '3.9' 或 '3.x'
 
-    - name: Install Python dependencies
-      run: |
-        python3 -m pip install --user requests
-
-    - name: Run update_sub.py
-      run: |
-        python3 update_sub.py
-
-    - name: Commit sub.txt to repository
+      - name: Install Python dependencies
         run: |
-          git config --global user.name 'GitHub Action'
-          git config --global user.email 'action@github.com'
-          git add sub.txt
-          git commit -m 'Update sub.txt with new proxies'
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Install Xray-core
+        run: |
+          curl -L https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-64.zip -o xray.zip
+          unzip xray.zip -d xray
+          chmod +x xray/xray
+          mv xray/xray /usr/local/bin/xray
+          xray --version
+
+      - name: Run update_sub.py
+        run: |
+          python3 update_sub.py
+
+      - name: Check sub.txt existence
+        run: |
+          if [ ! -f sub.txt ]; then
+            echo "Error: sub.txt was not generated"
+            exit 1
+          fi
+          ls -la
 
       - name: Upload sub.txt as artifact
         uses: actions/upload-artifact@v4
         with:
           name: sub-files
           path: sub.txt
+
+      - name: Commit sub.txt to repository
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git add sub.txt
+          git commit -m 'Update sub.txt with new proxies' || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
