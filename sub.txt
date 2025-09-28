@@ -1,10 +1,10 @@
-vmess://{"v":"2","ps":"🇺🇸 VMESS-未知>美国-NF解锁德国地区非自制剧-ChatGPT-TikTok-YouTube-npmjs.com:8080","add":"npmjs.com","port":"8080","type":"none","id":"6cbc9c78-1cb1-57d4-a999-e2f4e34c1e03","aid":"0","net":"ws","path":"/nasnet/cdn","host":"ke7hz36ewz-4515017473.mashallahbet.com","tls":""} # [ By EbraSha ] 🔒
-vless://4c600df7-b464-4f01-8d61-85fc3c068215@159.65.194.42:55512?security=none&encryption=none&type=ws # [ By EbraSha ] 🔒
-vless://b1fe7cec-3028-4cf0-b1c3-af55efd23ad8@91.99.169.64:8443?mode=stream-one&security=none&encryption=none&type=xhttp # [ By EbraSha ] 🔒
-vless://DIGIV2RAY@www.speedtest.net:2052?security=none&encryption=none&host=speedtest.net&type=ws # [ By EbraSha ] 🔒
-vless://0ffffabd-5622-4eef-90c8-da504ed2c209@noetic.bagsale.click:443?security=none&encryption=none&host=speedtest.net&headerType=http&type=tcp # [ By EbraSha ] 🔒
-vless://df0680ca-e43c-498d-ed86-8e196eedd012@638938755008242773.vienna-drc-tusacaf.info:8880?mode=gun&security=none&encryption=none&type=grpc # [ By EbraSha ] 🔒
-vless://844df730-9b60-4f5f-a28f-d3fa9d456117@www.speedtest.net:2086/?type=ws&host=speedtest.net&security=none # [ By EbraSha ] 🔒
-vmess://{"add":"57.129.28.65","aid":"0","host":"kapelleng.com","id":"03fcc618-b93d-6796-6aed-8a38c975d581","net":"ws","path":"/linkvws","port":"443","ps":"@Rayan_Config 97","scy":"auto","sni":"kapelleng.com","tls":"tls","type":"---","v":"2"} # [ By EbraSha ] 🔒
-vless://ccbe6b7c-9264-40c4-8bc1-ef8f6205d7a4@www.speedtest.net:8443?security=tls&encryption=none&host=speedtest.net&fp=chrome&type=ws # [ By EbraSha ] 🔒
-vless://01cb18d1-2062-47e7-999b-ec08e8b2ec85@104.24.148.184:80?security=&type=ws&host=speedtest.net&encryption=none # [ By EbraSha ] 🔒
+vless://88538870-5626-4cd7-9cda-1e0b6253c9ce@www.speedtest.net:443?security=tls&encryption=none&host=speedtest.net&type=ws # [ By EbraSha ] 🔒
+vless://df0680ca-e43c-498d-ed86-8e196eedd012@85.209.153.82:8880?mode=gun&security=&encryption=none&type=grpc # [ By EbraSha ] 🔒
+vless://9a464637-7d90-4497-af4f-c5c8017a9b77@172.66.40.99:443?security=tls&encryption=none&host=speedtest.net&type=ws # [ By EbraSha ] 🔒
+vless://df0680ca-e43c-498d-ed86-8e196eedd012@638934442807081605.stockholm-drc-tusacae.info:8880?mode=gun&security=&encryption=none&type=grpc # [ By EbraSha ] 🔒
+vless://f23b820b-b88f-4c40-8b20-b4b36629f6b1@sss70053.tas-bazi.com:443?mode=stream-one&security=&encryption=none&type=xhttp # [ By EbraSha ] 🔒
+vless://e31520a8-1f17-4915-9a8a-03aa9fd1be34@172.66.40.99:80?security=none&encryption=none&host=speedtest.net&type=ws # [ By EbraSha ] 🔒
+vless://22d29719-4510-46f6-a26b-61fbb6963fcc@83.228.210.39:443?security=reality&encryption=none&pbk=XSIaUifuSpo2bF-eYsY5fgTG3wzo09SY-oGn73zJPF0&host=speedtest.net&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision # [ By EbraSha ] 🔒
+vless://0caa3713-3ff8-4356-bd16-5806a40ead06@m67a.vip784.com:33801?security=none&encryption=none&host=speedtest.net&headerType=http&type=tcp # [ By EbraSha ] 🔒
+ss://YWVzLTEyOC1nY206c2hhZG93c29ja3M=@156.146.62.161:443 # [ By EbraSha ] 🔒
+vless://df0680ca-e43c-498d-ed86-8e196eedd012@157.180.20.126:8880?security=&type=grpc&encryption=none # [ By EbraSha ] 🔒
