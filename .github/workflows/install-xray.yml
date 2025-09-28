@@ -29,10 +29,18 @@ jobs:
       run: |
         python3 update_sub.py
 
-    - name: Upload sub.txt
-      uses: actions/upload-artifact@v4
-      with:
-        name: sub-files
-        path: |
-          sub.txt
-          sub_base64.txt
+    - name: Commit sub.txt to repository
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git add sub.txt
+          git commit -m 'Update sub.txt with new proxies'
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload sub.txt as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sub-files
+          path: sub.txt
