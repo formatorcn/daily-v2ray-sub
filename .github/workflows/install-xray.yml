@@ -3,39 +3,32 @@ name: Install Xray in Actions
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:  # 允许手动触发
+  workflow_dispatch:
 
 jobs:
   install-xray:
-    runs-on: ubuntu-latest  # 使用 Ubuntu 虚拟机
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Install Xray-core
+    - name: Install Xray-core (无 root)
       run: |
-        # 一键安装脚本（使用 nobody 用户，避免覆盖服务文件）
-        bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install
-        
-        # 验证安装
-        xray --version
-        
-        # 可选：安装 geodata（地理数据，用于路由）
-        bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install-geodata
+        # 下载最新 Xray 预编译二进制（Linux 64 位）
+        curl -L https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-64.zip -o xray.zip
+        unzip xray.zip -d xray
+        chmod +x xray/xray
+        mv xray/xray /usr/local/bin/xray
+        xray --version  # 验证安装
 
-    - name: Run Xray (示例：启动并测试)
+        # 下载 geodata（可选）
+        curl -L https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat -o geoip.dat
+        curl -L https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat -o geosite.dat
+
+    - name: Run update_sub.py
       run: |
-        # 创建简单配置文件（config.json），根据需要自定义
-        cat > config.json << EOF
-        {
-          "inbounds": [{"port": 1080, "protocol": "socks"}],
-          "outbounds": [{"protocol": "freedom"}]
-        }
-        EOF
-        
-        # 后台运行 Xray
-        nohup xray run -c config.json &
-        
-        # 测试本地 SOCKS 代理（示例）
-        curl --socks5 127.0.0.1:1080 http://www.gstatic.com/generate_204 || echo "Test failed"
+        # 确保 Python 环境
+        python3 -m pip install requests
+        # 运行你的脚本
+        python3 update_sub.py
