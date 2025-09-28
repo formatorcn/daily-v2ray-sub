@@ -1,3 +1,0 @@
-ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNTpsbnRmVmVpQjdjeTNIbTFP@c1.nastuh.link:443#🇬🇧 London, ENG, United Kingdom # Latency: 349.30499999999995ms
-ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNToxUld3WGh3ZkFCNWdBRW96VTRHMlBn@45.87.175.199:8080#%F0%9F%87%B1%F0%9F%87%B9LT-45.87.175.199-0176 # Latency: 393.511ms
-vless://df0680ca-e43c-498d-ed86-8e196eedd012@195.42.233.125:8880?mode=gun&security=none&encryption=none&type=grpc#azadiiivpn 🎀 # Latency: 842.3620000000001ms
