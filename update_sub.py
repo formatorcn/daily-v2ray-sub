@@ -6,27 +6,26 @@ import re
 from urllib.parse import urlparse, parse_qs
 import socket
 import json
+import random
 
-# 代理源
+# 优化的代理源，添加针对中国环境的源
 SUB_SOURCES = [
-    # Barry-far 的新路径（Splitted-By-Protocol，按协议分开，避免大文件）
-    "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/Splitted-By-Protocol/vless.txt",  # Vless 专用
-    "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/Splitted-By-Protocol/vmess.txt",  # Vmess 专用
-    "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/Splitted-By-Protocol/ss.txt",     # Shadowsocks 专用
-    
-    # Epodonios 的合并源（每5分钟更新）
-    "https://raw.githubusercontent.com/Epodonios/v2ray-configs/main/All_Configs_base64_Sub.txt",
-    
-    # MatinGhanbari 的过滤源（每15分钟更新，支持多协议）
-    "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/filtered/subs/vless.txt",
-    "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/filtered/subs/vmess.txt",
-    
-    # Ebrasha 的多类型源（每30分钟更新）
+    # 高质量 VLESS 源（支持 Reality 或伪装域名）
+    "https://raw.githubusercontent.com/Mahdi0024/ProxyCollector/main/proxies/vless.txt",
     "https://raw.githubusercontent.com/ebrasha/free-v2ray-public-list/main/vless_configs.txt",
-    
-    # 其他活跃源（2025年更新）
-    "https://raw.githubusercontent.com/Mahdi0024/ProxyCollector/main/proxies/vless.txt",  # 自动测试过的
-    "https://raw.githubusercontent.com/NiREvil/vless/main/sub.txt",  # 简单 vless 列表
+    "https://raw.githubusercontent.com/NiREvil/vless/main/sub.txt",
+    # 新增源：专注于 Reality 协议或伪装流量
+    "https://raw.githubusercontent.com/hiddify/hiddify-configs/main/subscriptions/vless_reality.txt",
+    "https://raw.githubusercontent.com/freefq/free/master/v2",
+    # 保留部分原源，但优先级降低
+    "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/Splitted-By-Protocol/vless.txt",
+    "https://raw.githubusercontent.com/Epodonios/v2ray-configs/main/All_Configs_base64_Sub.txt",
+]
+
+# 伪装域名白名单（绕过 GFW 探测）
+TRUSTED_SNI = [
+    'www.cloudflare.com', 'www.microsoft.com', 'www.apple.com',
+    'www.amazon.com', 'www.google.com', 'www.tencent.com'
 ]
 
 def fetch_proxies():
@@ -38,15 +37,15 @@ def fetch_proxies():
                 content = resp.text.strip()
                 if 'base64' in url.lower():
                     decoded = base64.b64decode(content).decode('utf-8')
-                    links = re.findall(r'(vmess://[^\n]+|vless://[^\n]+|ss://[^\n]+)', decoded)
+                    links = re.findall(r'(vless://[^\n]+)', decoded)
                 else:
-                    links = [line.strip() for line in content.split('\n') if line.strip().startswith(('vmess://', 'vless://', 'ss://'))]
+                    links = [line.strip() for line in content.split('\n') if line.strip().startswith('vless://')]
                 all_proxies.update(links)
-                print(f"Fetched {len(links)} proxies from {url}")
+                print(f"Fetched {len(links)} VLESS proxies from {url}")
         except Exception as e:
             print(f"Error fetching {url}: {e}")
-    print(f"Total unique proxies: {len(all_proxies)}")
-    return list(all_proxies)[:50]
+    print(f"Total unique VLESS proxies: {len(all_proxies)}")
+    return list(all_proxies)[:100]  # 限制测试数量以提高效率
 
 def is_host_valid(host):
     try:
@@ -82,72 +81,51 @@ def convert_to_v2ray_config(proxy_url):
     parsed = parse_proxy(proxy_url)
     if not parsed:
         return None
+    if parsed['protocol'] != 'vless':
+        return None  # 只处理 VLESS
     config = {
         "inbounds": [{"port": 1080, "protocol": "socks", "settings": {"auth": "noauth"}}],
-        "outbounds": [{}]
-    }
-    outbound = config["outbounds"][0]
-    if parsed['protocol'] == 'vless':
-        outbound["protocol"] = "vless"
-        outbound["settings"] = {
-            "vnext": [{
-                "address": parsed['host'],
-                "port": parsed['port'],
-                "users": [{"id": parsed['uuid'], "encryption": parsed['encryption']}]
-            }]
-        }
-        if parsed['type'] == 'ws':
-            outbound["streamSettings"] = {
-                "network": "ws",
-                "wsSettings": {"path": parsed['path'], "headers": {"Host": parsed.get('host', '')}},
-                "security": parsed['security'],
-                "tlsSettings": {"serverName": parsed['sni']} if parsed['security'] == 'tls' else {}
-            }
-        elif parsed['type'] == 'grpc':
-            outbound["streamSettings"] = {
-                "network": "grpc",
-                "grpcSettings": {"serviceName": parsed['params'].get('serviceName', [''])[0]},
-                "security": parsed['security']
-            }
-        elif parsed['type'] == 'tcp':
-            outbound["streamSettings"] = {
-                "network": "tcp",
-                "security": parsed['security'],
-                "tlsSettings": {"serverName": parsed['sni']} if parsed['security'] == 'tls' else {}
-            }
-    elif parsed['protocol'] == 'vmess':
-        outbound["protocol"] = "vmess"
-        outbound["settings"] = {
-            "vnext": [{
-                "address": parsed['host'],
-                "port": parsed['port'],
-                "users": [{"id": parsed['uuid'], "alterId": 0, "security": parsed.get('scy', 'auto')}]
-            }]
-        }
-        if parsed['type'] == 'ws':
-            outbound["streamSettings"] = {
-                "network": "ws",
-                "wsSettings": {"path": parsed['path'], "headers": {"Host": parsed.get('host', '')}},
-                "security": parsed['security']
-            }
-    elif parsed['protocol'] == 'ss':
-        try:
-            decoded = base64.b64decode(parsed['uuid'].split('@')[0]).decode('utf-8')
-            cipher, password = decoded.split(':')
-            outbound["protocol"] = "shadowsocks"
-            outbound["settings"] = {
-                "servers": [{
+        "outbounds": [{
+            "protocol": "vless",
+            "settings": {
+                "vnext": [{
                     "address": parsed['host'],
                     "port": parsed['port'],
-                    "method": cipher,
-                    "password": password
+                    "users": [{"id": parsed['uuid'], "encryption": parsed['encryption']}]
                 }]
+            },
+            "streamSettings": {
+                "network": parsed['type'],
+                "security": parsed['security'],
             }
-        except Exception as e:
-            print(f"Failed to parse Shadowsocks URL {proxy_url}: {e}")
-            return None
-    else:
-        return None
+        }]
+    }
+    if parsed['type'] == 'ws':
+        config["outbounds"][0]["streamSettings"]["wsSettings"] = {
+            "path": parsed['path'],
+            "headers": {"Host": parsed.get('host', parsed['sni'])}
+        }
+        if parsed['security'] == 'tls':
+            config["outbounds"][0]["streamSettings"]["tlsSettings"] = {
+                "serverName": parsed['sni'],
+                "fingerprint": parsed['fp'] or 'chrome'
+            }
+    elif parsed['type'] == 'grpc':
+        config["outbounds"][0]["streamSettings"]["grpcSettings"] = {
+            "serviceName": parsed['params'].get('serviceName', [''])[0]
+        }
+        if parsed['security'] == 'tls':
+            config["outbounds"][0]["streamSettings"]["tlsSettings"] = {
+                "serverName": parsed['sni'],
+                "fingerprint": parsed['fp'] or 'chrome'
+            }
+    elif parsed['type'] == 'tcp' and parsed['security'] == 'reality':
+        config["outbounds"][0]["streamSettings"]["realitySettings"] = {
+            "publicKey": parsed['pbk'],
+            "shortId": parsed['sid'],
+            "serverName": parsed['sni'],
+            "fingerprint": parsed['fp'] or 'chrome'
+        }
     return config
 
 def test_speed(proxy_url):
@@ -156,6 +134,11 @@ def test_speed(proxy_url):
         print(f"Invalid host for {proxy_url}")
         return float('inf')
     
+    # 过滤不适合中国环境的配置
+    if parsed['security'] not in ['tls', 'reality'] or (parsed['sni'] and parsed['sni'] not in TRUSTED_SNI):
+        print(f"Filtered out {proxy_url} due to unsupported security or SNI")
+        return float('inf')
+
     config = convert_to_v2ray_config(proxy_url)
     if not config:
         print(f"Failed to generate config for {proxy_url}")
@@ -167,16 +150,23 @@ def test_speed(proxy_url):
         proc = subprocess.Popen(['/usr/local/bin/xray', 'run', '-c', 'temp.json'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         time.sleep(3)
         
+        # 使用国内可访问的测试目标
+        test_urls = [
+            'http://www.baidu.com',
+            'http://www.qq.com',
+            'http://www.taobao.com'
+        ]
+        test_url = random.choice(test_urls)
         result = subprocess.run(
-            ['curl', '-o', '/dev/null', '-s', '--max-time', '20', '-w', '%{time_total}',
-             'http://www.gstatic.com/generate_204', '--socks5', '127.0.0.1:1080'],
-            capture_output=True, text=True, timeout=25
+            ['curl', '-o', '/dev/null', '-s', '--max-time', '15', '-w', '%{time_total}',
+             test_url, '--socks5', '127.0.0.1:1080'],
+            capture_output=True, text=True, timeout=20
         )
         
         proc.terminate()
         if result.returncode == 0:
             latency = float(result.stdout) * 1000
-            print(f"Success: {proxy_url} - {latency}ms")
+            print(f"Success: {proxy_url} - {latency}ms (tested on {test_url})")
             return latency
         else:
             print(f"Curl failed for {proxy_url}: {result.stderr}")
@@ -185,7 +175,7 @@ def test_speed(proxy_url):
         print(f"Test failed for {proxy_url}: {e}")
         return float('inf')
 
-def generate_sub(proxies, top_n=10, max_latency=10000):
+def generate_sub(proxies, top_n=10, max_latency=5000):
     results = []
     for proxy in proxies:
         latency = test_speed(proxy)
