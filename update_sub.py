@@ -7,12 +7,26 @@ from urllib.parse import urlparse, parse_qs
 import socket
 import json
 
+# 代理源
 SUB_SOURCES = [
-    "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/Splitted-By-Protocol/vless.txt",
+    # Barry-far 的新路径（Splitted-By-Protocol，按协议分开，避免大文件）
+    "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/Splitted-By-Protocol/vless.txt",  # Vless 专用
+    "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/Splitted-By-Protocol/vmess.txt",  # Vmess 专用
+    "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/Splitted-By-Protocol/ss.txt",     # Shadowsocks 专用
+    
+    # Epodonios 的合并源（每5分钟更新）
     "https://raw.githubusercontent.com/Epodonios/v2ray-configs/main/All_Configs_base64_Sub.txt",
-    "https://raw.githubusercontent.com/freefq/free/master/v2ray",
-    "https://raw.githubusercontent.com/v2ray/v2ray-configs/main/subscriptions/vless.txt",
-    "https://raw.githubusercontent.com/yebekhe/V2ray-Configs/main/sub.txt"
+    
+    # MatinGhanbari 的过滤源（每15分钟更新，支持多协议）
+    "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/filtered/subs/vless.txt",
+    "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/filtered/subs/vmess.txt",
+    
+    # Ebrasha 的多类型源（每30分钟更新）
+    "https://raw.githubusercontent.com/ebrasha/free-v2ray-public-list/main/vless_configs.txt",
+    
+    # 其他活跃源（2025年更新）
+    "https://raw.githubusercontent.com/Mahdi0024/ProxyCollector/main/proxies/vless.txt",  # 自动测试过的
+    "https://raw.githubusercontent.com/NiREvil/vless/main/sub.txt",  # 简单 vless 列表
 ]
 
 def fetch_proxies():
