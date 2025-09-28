@@ -9,9 +9,24 @@ import json
 
 # 代理源
 SUB_SOURCES = [
-    # 添加更可靠的源
-    "https://raw.githubusercontent.com/some-reliable-source/v2ray/main/sub.txt",
-    # 通过动态搜索获取
+    # Barry-far 的新路径（Splitted-By-Protocol，按协议分开，避免大文件）
+    "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/Splitted-By-Protocol/vless.txt",  # Vless 专用
+    "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/Splitted-By-Protocol/vmess.txt",  # Vmess 专用
+    "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/Splitted-By-Protocol/ss.txt",     # Shadowsocks 专用
+    
+    # Epodonios 的合并源（每5分钟更新）
+    "https://raw.githubusercontent.com/Epodonios/v2ray-configs/main/All_Configs_base64_Sub.txt",
+    
+    # MatinGhanbari 的过滤源（每15分钟更新，支持多协议）
+    "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/filtered/subs/vless.txt",
+    "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/filtered/subs/vmess.txt",
+    
+    # Ebrasha 的多类型源（每30分钟更新）
+    "https://raw.githubusercontent.com/ebrasha/free-v2ray-public-list/main/vless_configs.txt",
+    
+    # 其他活跃源（2025年更新）
+    "https://raw.githubusercontent.com/Mahdi0024/ProxyCollector/main/proxies/vless.txt",  # 自动测试过的
+    "https://raw.githubusercontent.com/NiREvil/vless/main/sub.txt",  # 简单 vless 列表
 ]
 
 def fetch_proxies():
@@ -29,7 +44,8 @@ def fetch_proxies():
                 all_proxies.update(links)
         except Exception as e:
             print(f"Error fetching {url}: {e}")
-    return list(all_proxies)[:100]
+            print(f"Fetched {len(all_proxies)} unique proxies")
+    return list(all_proxies)[:50]  # 减少到50个，加快测试
 
 def is_host_valid(host):
     try:
