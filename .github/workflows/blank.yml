@@ -2,7 +2,7 @@ name: Daily V2Ray Subscription Update
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # 每天UTC 00:00运行
+    - cron: '0 0 * * *'  # 每天 UTC 00:00（北京时间 08:00）
   workflow_dispatch:  # 手动触发
 
 jobs:
@@ -10,12 +10,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}  # 使用默认 GITHUB_TOKEN
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.12'
     - name: Install dependencies
-      run: pip install requests pyyaml  # 如需YAML支持
+      run: pip install requests
     - name: Run update script
       run: python update_sub.py
     - name: Commit changes
