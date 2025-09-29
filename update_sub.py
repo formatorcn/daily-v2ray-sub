@@ -256,7 +256,7 @@ def test_speed(proxy_url: str, max_retries: int = 2, timeout: int = 15) -> float
         except:
             pass
 
-def generate_sub(proxies: List[str], top_n: int = 10, max_latency: float = 8000) -> None:
+def generate_sub(proxies: List[str], top_n: int = 20, max_latency: float = 8000) -> None:
     """Generate subscription file with top performing proxies."""
     results = []
     with ThreadPoolExecutor(max_workers=5) as executor:
