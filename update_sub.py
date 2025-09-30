@@ -18,16 +18,16 @@ logger = logging.getLogger(__name__)
 # Proxy sources (updated for 2025, multi-protocol support)
 SUB_SOURCES = [
     # Multi-protocol sources
-    "https://raw.githubusercontent.com/soroushmirzaei/telegram-configs-collector/main/protocols/vless",
-    "https://raw.githubusercontent.com/soroushmirzaei/telegram-configs-collector/main/protocols/vmess",
-    "https://raw.githubusercontent.com/soroushmirzaei/telegram-configs-collector/main/protocols/trojan",
     "https://raw.githubusercontent.com/yaney01/telegram-collector/main/protocols/vless",
     "https://raw.githubusercontent.com/yaney01/telegram-collector/main/protocols/vmess",
-    "https://raw.githubusercontent.com/eQnz/configs-collector-v2ray/main/protocols/vless",
     "https://raw.githubusercontent.com/Kwinshadow/TelegramV2rayCollector/main/sublinks/vless.txt",
-    "https://raw.githubusercontent.com/Farid-Karimi/Config-Collector/main/vless.txt",
     "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/filtered/subs/vless.txt",
     "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/Splitted-By-Protocol/vless.txt",
+    "https://raw.githubusercontent.com/mohamadfg-dev/telegram-v2ray-configs-collector/refs/heads/main/category/vless.txt",
+    "https://raw.githubusercontent.com/mohamadfg-dev/telegram-v2ray-configs-collector/refs/heads/main/category/vmess.txt",
+    "https://raw.githubusercontent.com/mohamadfg-dev/telegram-v2ray-configs-collector/refs/heads/main/category/trojan.txt",
+    "https://raw.githubusercontent.com/R-the-coder/V2ray-configs/main/vless.txt",
+    "https://raw.githubusercontent.com/R-the-coder/V2ray-configs/main/vmess.txt",
 ]
 
 # Trusted SNI for filtering
